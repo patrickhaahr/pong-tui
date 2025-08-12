@@ -56,8 +56,7 @@ impl App {
         match self.mode {
             Mode::Menu => {
                 let title = Line::from("Pong Game\n").bold().blue().centered();
-                let text =
-                    "Press `Esc`, `Ctrl-C` or `q` to stop running.\nPress `Enter` to start game";
+                let text = "Esc, Ctrl-C or q to Quit\nEsc to go back to Menu\nEnter to start Game";
 
                 frame.render_widget(
                     Paragraph::new(text)
@@ -87,8 +86,15 @@ impl App {
     /// Handles the key events and updates the state of [`App`].
     fn on_key_event(&mut self, key: KeyEvent) {
         match (key.modifiers, key.code) {
-            (_, KeyCode::Esc | KeyCode::Char('q'))
-            | (KeyModifiers::CONTROL, KeyCode::Char('c') | KeyCode::Char('C')) => self.quit(),
+            (_, KeyCode::Esc) => match self.mode {
+                Mode::Menu => self.quit(),
+                Mode::Game => self.mode = Mode::Menu,
+            },
+
+            (_, KeyCode::Char('q')) => self.quit(),
+
+            (KeyModifiers::CONTROL, KeyCode::Char('c') | KeyCode::Char('C')) => self.quit(),
+
             (_, KeyCode::Enter) => self.start_game(),
             _ => {}
         }
@@ -112,7 +118,7 @@ impl App {
         let mut lines: Vec<String> = Vec::with_capacity(area.height as usize);
         for _ in 0..(area.height as usize) {
             let mut s = String::new();
-            s.push_str(&" ".repeat(center_col as usize));
+            s.push_str(&" ".repeat(center_col));
             s.push('█');
             lines.push(s);
         }
