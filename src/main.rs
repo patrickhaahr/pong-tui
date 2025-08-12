@@ -55,7 +55,7 @@ impl App {
     fn render(&mut self, frame: &mut Frame) {
         match self.mode {
             Mode::Menu => {
-                let title = Line::from("Pong Game\n").bold().blue().centered();
+                let title = Line::from(" Pong Game \n").bold().blue().centered();
                 let text = "Esc, Ctrl-C or q to Quit\nEsc to go back to Menu\nEnter to start Game";
 
                 frame.render_widget(
@@ -66,7 +66,11 @@ impl App {
                 );
             }
             Mode::Game => {
-                Self::center_line(frame, frame.area());
+                let block = Block::bordered();
+                let inner_area = block.inner(frame.area());
+
+                frame.render_widget(block, frame.area());
+                Self::center_line(frame, inner_area);
             }
         }
     }
